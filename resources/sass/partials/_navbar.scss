@@ -1,0 +1,21 @@
+header{
+
+    .navbar{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 5px;
+    }
+
+    .navbar-list{
+        display: flex;
+        li{
+            list-style: none;
+            a{
+                padding: 5;
+                margin-left:10px;
+                text-decoration: none;
+            }
+        }
+    }
+}

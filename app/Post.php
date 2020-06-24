@@ -11,6 +11,7 @@ class Post extends Model
         'user_id',
         'title',
         'body',
+        'slug',
 
     ];
 
@@ -22,6 +23,11 @@ class Post extends Model
     public function user()
     {
         return $this->belongsTo('App\User');
+    }
+
+    public function tags()
+    {
+        return $this->belongsToMany('App\Tag');
     }
 
 

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\Tag;
+use Illuminate\Support\Str;
 
 class PostsController extends Controller
 {
@@ -27,7 +29,11 @@ class PostsController extends Controller
      */
     public function create()
     {
-        //
+
+        $tags = Tag::all();
+
+
+        return view('posts.create', compact('tags'));
     }
 
     /**
@@ -38,7 +44,28 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255',
+            'body' => 'required',
+            'tags.*' => 'exists:tags,id',
+        ]);
+
+        $data = $request->all();
+
+        $data['user_id'] = 1;
+        $data['slug'] = Str::slug($data['title'], '-');
+
+        $newPost = new Post();
+        $newPost->fill($data);
+
+        $saved = $newPost->save();
+
+        if ($saved) {
+            if (empty($data['tags'])){
+                $newPost->tags()->attach($data['tags']);
+            }
+            return redirect()->route('posts.show', $newPost->slug);
+        }
     }
 
     /**
@@ -47,9 +74,16 @@ class PostsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        //
+        $post = Post::where('slug', $slug)->first();
+
+        if(empty($post))
+        {
+            abort('404');
+        }
+
+        return view('posts.show', compact('post'));
     }
 
     /**
